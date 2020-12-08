@@ -33,10 +33,13 @@
 #define CONFIG_SYS_MMC_ENV_DEV      0
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
+	"opensbi_emmc_start=0x800\0" \
+	"opensbi_emmc_size=0x280\0" \
 	"dtb_emmc_start=0x1000\0" \
 	"dtb_emmc_size=0x100\0" \
 	"kernel_emmc_start=0x2000\0" \
 	"kernel_emmc_size=0xa000\0" \
+	"opensbi_addr=0x0\0" \
 	"dtb_addr=0x01f00000\0" \
 	"kernel_addr=0x02000000\0" \
 	"avail_addr=0x10000000\0" \
@@ -44,6 +47,7 @@
 
 #undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \
+	"mmc read ${opensbi_addr} ${opensbi_emmc_start} ${opensbi_emmc_size} ; " \
 	"mmc read ${dtb_addr} ${dtb_emmc_start} ${dtb_emmc_size} ; " \
 	"mmc read ${kernel_addr} ${kernel_emmc_start} ${kernel_emmc_size} ; " \
 	"bootm ${kernel_addr} - ${dtb_addr}"

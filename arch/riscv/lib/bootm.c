@@ -86,7 +86,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 	int ret;
 #endif
 
-	kernel = (void (*)(ulong, void *))images->ep;
+	kernel = (void (*)(ulong, void *))simple_strtol(env_get("opensbi_addr"), NULL, 0);
 
 	bootstage_mark(BOOTSTAGE_ID_RUN_OS);
 
