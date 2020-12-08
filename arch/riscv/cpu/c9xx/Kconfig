@@ -10,7 +10,9 @@ config RISCV_THEAD
 	imply CPU
 	imply CPU_RISCV
 	imply RISCV_TIMER
+	imply RISCV_RDTIME
 	imply CMD_CPU
+	imply THEAD_IPI
 	imply SPL_CPU_SUPPORT
 	imply SPL_OPENSBI
 	imply SPL_LOAD_FIT

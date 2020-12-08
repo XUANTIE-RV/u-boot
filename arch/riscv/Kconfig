@@ -185,6 +185,12 @@ config ANDES_PLMT
 	  The Andes PLMT block holds memory-mapped mtime register
 	  associated with timer tick.
 
+config THEAD_IPI
+	bool
+	depends on RISCV_MMODE || SPL_RISCV_MMODE
+	help
+	  Just helps compiling
+
 config RISCV_RDTIME
 	bool
 	default y if RISCV_SMODE || SPL_RISCV_SMODE

@@ -19,7 +19,7 @@ config SYS_CONFIG_NAME
     default "ice-c910"
 
 config SYS_TEXT_BASE
-    default 0x40000000 if !RISCV_SMODE
+    default 0xc0000000 if RISCV_MMODE
     default 0x00200000 if RISCV_SMODE
 
 config BOARD_SPECIFIC_OPTIONS # dummy
