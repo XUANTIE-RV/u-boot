@@ -1,0 +1,43 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+if TARGET_ICE_C910
+
+config SYS_CPU
+    default "c9xx"
+
+config SYS_VENDOR
+    default "thead"
+
+config SYS_BOARD
+    default "ice-c910"
+
+config SYS_CONFIG_NAME
+    default "ice-c910"
+
+config SYS_TEXT_BASE
+    default 0x40000000 if !RISCV_SMODE
+    default 0x00200000 if RISCV_SMODE
+
+config BOARD_SPECIFIC_OPTIONS # dummy
+    def_bool y
+    select RISCV_THEAD
+    imply CMD_FAT
+    imply CMD_NET
+    imply CMD_PING
+    imply CMD_BOOT_SLAVE
+    imply MII
+    imply NET_RANDOM_ETHADDR
+    imply PHY_LIB
+    imply PHY_MSCC
+    imply SPI
+    imply MMC
+    imply MMC_SPI
+    imply MMC_BROKEN_CD
+    imply CMD_MMC
+    imply SMP
+
+endif
