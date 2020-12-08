@@ -681,6 +681,9 @@ static init_fnc_t init_sequence_r[] = {
 #ifdef CONFIG_DM
 	initr_dm,
 #endif
+#ifdef CONFIG_ARCH_EARLY_INIT_R
+	arch_early_init_r,
+#endif
 #if defined(CONFIG_ARM) || defined(CONFIG_NDS32) || defined(CONFIG_RISCV) || \
 	defined(CONFIG_SANDBOX)
 	board_init,	/* Setup chipselects */
@@ -727,9 +730,6 @@ static init_fnc_t init_sequence_r[] = {
 	 * because PCU resources are crucial for flash access on some boards.
 	 */
 	initr_pci,
-#endif
-#ifdef CONFIG_ARCH_EARLY_INIT_R
-	arch_early_init_r,
 #endif
 	power_init_board,
 #ifdef CONFIG_MTD_NOR_FLASH
