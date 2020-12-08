@@ -674,8 +674,8 @@ int designware_eth_probe(struct udevice *dev)
 {
 	struct eth_pdata *pdata = dev_get_platdata(dev);
 	struct dw_eth_dev *priv = dev_get_priv(dev);
-	u32 iobase = pdata->iobase;
-	ulong ioaddr;
+	phys_addr_t iobase = pdata->iobase;
+	phys_addr_t ioaddr;
 	int ret, err;
 	struct reset_ctl_bulk reset_bulk;
 #ifdef CONFIG_CLK
@@ -745,7 +745,7 @@ int designware_eth_probe(struct udevice *dev)
 	}
 #endif
 
-	debug("%s, iobase=%x, priv=%p\n", __func__, iobase, priv);
+	debug("%s, iobase=%lx, priv=%p\n", __func__, iobase, priv);
 	ioaddr = iobase;
 	priv->mac_regs_p = (struct eth_mac_regs *)ioaddr;
 	priv->dma_regs_p = (struct eth_dma_regs *)(ioaddr + DW_DMA_BASE_OFFSET);
@@ -854,6 +854,7 @@ static const struct udevice_id designware_eth_ids[] = {
 	{ .compatible = "amlogic,meson-axg-dwmac" },
 	{ .compatible = "st,stm32-dwmac" },
 	{ .compatible = "snps,arc-dwmac-3.70a" },
+	{ .compatible = "snps,dwmac" },
 	{ }
 };
 
