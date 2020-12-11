@@ -26,6 +26,12 @@
 #define CONFIG_PHY_MARVELL      1
 #define CONFIG_NET_RETRY_COUNT  20
 
+/* ENV related */
+#define CONFIG_SYS_FLASH_BASE       0x0
+#define CONFIG_SYS_MAX_FLASH_BANKS  1
+#define CONFIG_ENV_ADDR             (CONFIG_SYS_FLASH_BASE + CONFIG_ENV_OFFSET)
+#define CONFIG_SYS_MMC_ENV_DEV      0
+
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"dtb_emmc_start=0x1000\0" \
 	"dtb_emmc_size=0x100\0" \
