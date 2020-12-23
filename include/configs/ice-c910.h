@@ -48,11 +48,4 @@
 	"avail_addr=0x10000000\0" \
 	"\0"
 
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND \
-	"mmc read ${opensbi_addr} ${opensbi_emmc_start} ${opensbi_emmc_size} ; " \
-	"mmc read ${dtb_addr} ${dtb_emmc_start} ${dtb_emmc_size} ; " \
-	"mmc read ${kernel_addr} ${kernel_emmc_start} ${kernel_emmc_size} ; " \
-	"bootm ${kernel_addr} - ${dtb_addr}"
-
 #endif /* __CONFIG_H */
