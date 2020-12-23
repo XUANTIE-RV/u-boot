@@ -43,8 +43,8 @@
 	"kernel_emmc_start=0x2000\0" \
 	"kernel_emmc_size=0xa000\0" \
 	"opensbi_addr=0x0\0" \
-	"dtb_addr=0x01f00000\0" \
-	"kernel_addr=0x02000000\0" \
+	"dtb_addr=0x40000000\0" \
+	"kernel_addr=0x00200000\0" \
 	"avail_addr=0x10000000\0" \
 	"\0"
 
