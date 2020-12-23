@@ -22,6 +22,14 @@ config SYS_TEXT_BASE
     default 0xc0000000 if RISCV_MMODE
     default 0x00200000 if RISCV_SMODE
 
+config SPL_TEXT_BASE
+    hex
+    default 0x3fe400000
+
+config SPL_MAX_SIZE
+    hex
+    default 0x2f000
+
 config BOARD_SPECIFIC_OPTIONS # dummy
     def_bool y
     select RISCV_THEAD

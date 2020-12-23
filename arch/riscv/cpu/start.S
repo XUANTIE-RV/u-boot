@@ -43,6 +43,11 @@ _start:
 	csrr	a0, CSR_MHARTID
 #endif
 
+#if (defined CONFIG_SPL_BUILD) && (defined CONFIG_TARGET_ICE_C910)
+	li x3, 128
+	csrs 0x7cb, x3
+#endif
+
 	/* save hart id and dtb pointer */
 	mv	tp, a0
 	mv	s1, a1

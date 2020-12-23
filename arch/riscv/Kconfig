@@ -22,6 +22,7 @@ config TARGET_SIFIVE_FU540
 
 config TARGET_ICE_C910
 	bool "Support T-HEAD ICE C910 Board"
+	select SUPPORT_SPL
 
 endchoice
 
