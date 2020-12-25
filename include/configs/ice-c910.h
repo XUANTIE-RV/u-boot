@@ -46,6 +46,7 @@
 	"dtb_addr=0x40000000\0" \
 	"kernel_addr=0x00200000\0" \
 	"avail_addr=0x10000000\0" \
+	"boot_vector=0\0" \
 	"\0"
 
 #endif /* __CONFIG_H */
