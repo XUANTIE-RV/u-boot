@@ -122,6 +122,93 @@ static void dpu_config(void)
 	printf("DPU ChipDate is:0x%08x\n", readl((void *)0x3fff28028));
 }
 
+static void dpu_start(void)
+{
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001518));
+	writel(0x00071900, (void *)(0x3fff28000 + 0x00000000));
+	writel(0x00070900, (void *)(0x3fff28000 + 0x00000000));
+	writel(0x032f02d0, (void *)(0x3fff28000 + 0x00001430));
+	writel(0x05190500, (void *)(0x3fff28000 + 0x00001440));
+	writel(0x418102f8, (void *)(0x3fff28000 + 0x00001438));
+	writel(0x4287850b, (void *)(0x3fff28000 + 0x00001448));
+	writel(0x00000080, (void *)(0x3fff28000 + 0x00001488));
+	writel(0x00000005, (void *)(0x3fff28000 + 0x000014b8));
+	writel(0x00000111, (void *)(0x3fff28000 + 0x00001418));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001530));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001538));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001800));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001808));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001818));
+	writel(0x028002d0, (void *)(0x3fff28000 + 0x00001810));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001508));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001510));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001528));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001a18));
+	writel(0x00000001, (void *)(0x3fff28000 + 0x00001480));
+	writel(0xcc000000, (void *)(0x3fff28000 + 0x000014f0));
+	writel(0xcc000000, (void *)(0x3fff28000 + 0x000014e8));
+	writel(0x00030000, (void *)(0x3fff28000 + 0x000014f8));
+	writel(0x00000b40, (void *)(0x3fff28000 + 0x00001500));
+	writel(0x00000b40, (void *)(0x3fff28000 + 0x00001408));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001600));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x000018c0));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001900));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001640));
+	writel(0x00780140, (void *)(0x3fff28000 + 0x00001680));
+	writel(0x00000020, (void *)(0x3fff28000 + 0x00001580));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x000016c0));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001700));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001940));
+	writel(0x00500078, (void *)(0x3fff28000 + 0x000017c0));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001740));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001780));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001840));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001880));
+	writel(0x00005f7f, (void *)(0x3fff28000 + 0x00001a40));
+	writel(0x0000aa4f, (void *)(0x3fff28000 + 0x00001a80));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001ac0));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001b00));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001b40));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001b80));
+	writel(0x80008000, (void *)(0x3fff28000 + 0x00001bc0));
+	writel(0x00000153, (void *)(0x3fff28000 + 0x00001c00));
+
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001518));
+	writel(0x032f02d0, (void *)(0x3fff28000 + 0x00001430));
+	writel(0x05190500, (void *)(0x3fff28000 + 0x00001440));
+	writel(0x418102f8, (void *)(0x3fff28000 + 0x00001438));
+	writel(0x4287850b, (void *)(0x3fff28000 + 0x00001448));
+	writel(0x00000080, (void *)(0x3fff28000 + 0x00001488));
+	writel(0x00000005, (void *)(0x3fff28000 + 0x000014b8));
+	writel(0x00000111, (void *)(0x3fff28000 + 0x00001418));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001530));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001538));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001800));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001808));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001818));
+	writel(0x028002d0, (void *)(0x3fff28000 + 0x00001810));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001508));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001510));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001528));
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001a18));
+	writel(0x00000001, (void *)(0x3fff28000 + 0x00001480));
+	writel(0x04000000, (void *)(0x3fff28000 + 0x000014f0));
+	writel(0x04000000, (void *)(0x3fff28000 + 0x000014e8));
+	writel(0x00030000, (void *)(0x3fff28000 + 0x000014f8));
+	writel(0x00000b40, (void *)(0x3fff28000 + 0x00001500));
+	writel(0x00000b40, (void *)(0x3fff28000 + 0x00001408));
+	writel(0x03000000, (void *)(0x3fff28000 + 0x00001400));
+	writel(0x18000011, (void *)(0x3fff28000 + 0x00001518));
+	readl((void *)(0x3fff28000 + 0x00001518));
+	writel(0x18000030, (void *)(0x3fff28000 + 0x00001518));
+	writel(0x03000000, (void *)(0x3fff28000 + 0x00001400));
+	writel(0x18002811, (void *)(0x3fff28000 + 0x00001518));
+
+	writel(0, (void *)0x3fff72000);
+	udelay(200 * 1000);
+	writel(4, (void *)0x3fff72000);
+}
+
 static void vpu_hw_init(void)
 {
 	writel(readl((void *)0x3fff77074) | 0xf, (void *)0x3fff77074);
@@ -163,6 +250,7 @@ int board_init(void)
 	dmac_hw_init();
 	sd_hw_init();
 	spi_hw_init();
+	dpu_start();
 
 	return 0;
 }
