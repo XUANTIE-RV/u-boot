@@ -207,6 +207,9 @@ static void dpu_start(void)
 	writel(0, (void *)0x3fff72000);
 	udelay(200 * 1000);
 	writel(4, (void *)0x3fff72000);
+
+	udelay(400 * 1000);
+	writel(0x00000000, (void *)(0x3fff28000 + 0x00001518));
 }
 
 static void vpu_hw_init(void)
