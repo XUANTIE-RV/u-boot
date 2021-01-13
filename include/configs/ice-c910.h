@@ -47,6 +47,8 @@
 	"kernel_addr=0x00200000\0" \
 	"avail_addr=0x10000000\0" \
 	"boot_vector=0\0" \
+	"bootargs=console=ttyS0,115200 rdinit=/sbin/init rootwait rw earlyprintk root=PARTUUID=80a5a8e9-c744-491a-93c1-4f4194fd690b rootfstype=ext4 clk_ignore_unused loglevel=7 crashkernel=256M-:128M c910_mmu_v1 eth=00:a0:a0:a0:a0:a1\0" \
+	"bootcmd=ext4load mmc 0:2 $opensbi_addr fw_jump.bin; ext4load mmc 0:2 $dtb_addr hw.dtb; ext4load mmc 0:2 $kernel_addr uImage; bootm $kernel_addr - $dtb_addr\0" \
 	"\0"
 
 #endif /* __CONFIG_H */
