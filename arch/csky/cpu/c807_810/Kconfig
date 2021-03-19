@@ -1,0 +1,17 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+config C807_CSKY
+    bool
+    imply CPU
+    imply CPU_CSKY
+    imply CMD_CPU
+
+config C810_CSKY
+    bool
+    imply CPU
+    imply CPU_CSKY
+    imply CMD_CPU

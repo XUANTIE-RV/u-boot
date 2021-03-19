@@ -1,0 +1,87 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+menu "CSKY architecture"
+    depends on CSKY
+
+config SYS_ARCH
+    default "csky"
+
+config CPU_C807_810
+    bool
+
+config CPU_C860
+    bool
+
+config SYS_CPU
+    default "c807_810" if CPU_C807_810
+    default "c860" if CPU_C860
+
+choice
+    prompt "ASIC select"
+    optional
+
+config IS_ASIC
+    bool "support ASIC"
+
+endchoice
+
+choice
+    prompt "trust cpu select"
+    optional
+
+config TRUST_CPU
+    bool "use trust cpu"
+
+endchoice
+
+choice
+    prompt "Target select"
+    optional
+
+config TARGET_ICE_C860
+    bool "Support T-HEAD ICE C860 Board"
+    select CPU_C860
+    select SUPPORT_SPL
+
+config TARGET_ICE_C810
+    bool "Support T-HEAD ICE C810 Board"
+    select CPU_C807_810
+    select SUPPORT_SPL
+
+config TARGET_TIANHUO_C860
+    bool "Support T-HEAD TIANHUO C860 Board"
+    select CPU_C860
+    select SUPPORT_SPL
+
+config TARGET_TIANHUO_C810
+    bool "Support T-HEAD TIANHUO C810 Board"
+    select CPU_C807_810
+    select SUPPORT_SPL
+
+config TARGET_ANOLE_C860
+    bool "Support T-HEAD Anole C860 Board"
+    select CPU_C860
+    select SUPPORT_SPL
+
+config TARGET_ANOLE_C810
+    bool "Support T-HEAD Anole C810 Board"
+    select CPU_C807_810
+    select SUPPORT_SPL
+
+endchoice
+
+source "board/thead/ice-c860/Kconfig"
+source "board/thead/ice-c810/Kconfig"
+source "board/thead/tianhuo-c860/Kconfig"
+source "board/thead/tianhuo-c810/Kconfig"
+source "board/thead/anole-c860/Kconfig"
+source "board/thead/anole-c810/Kconfig"
+
+source "arch/csky/cpu/c807_810/Kconfig"
+source "arch/csky/cpu/c860/Kconfig"
+
+endmenu

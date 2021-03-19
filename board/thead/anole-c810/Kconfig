@@ -1,0 +1,39 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+if TARGET_ANOLE_C810
+
+config SYS_VENDOR
+    default "thead"
+
+config SYS_BOARD
+    default "anole-c810"
+
+config SYS_CONFIG_NAME
+    default "anole-c810"
+
+config SYS_TEXT_BASE
+    default 0x57800000
+
+config SPL_TEXT_BASE
+    default 0xfe400000
+
+config BOARD_SPECIFIC_OPTIONS # dummy
+    def_bool y
+    imply CMD_FAT
+    imply CMD_FS_GENERIC
+    imply CMD_NET
+    imply CMD_PING
+    imply MII
+    imply NET_RANDOM_ETHADDR
+    imply PHY_LIB
+    imply PHY_MSCC
+    imply SPI
+    imply MMC
+    imply CMD_MMC
+
+endif
+

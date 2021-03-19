@@ -1,0 +1,48 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+if TARGET_LIGHT_EVB_MPW_C910
+
+config SYS_CPU
+	default "c9xx"
+
+config SYS_VENDOR
+	default "thead"
+
+config SYS_BOARD
+	default "light-evb-mpw-c910"
+
+config SYS_CONFIG_NAME
+	default "light-evb-mpw-c910"
+
+config SYS_TEXT_BASE
+	default 0xc0000000 if RISCV_MMODE
+	default 0x00200000 if RISCV_SMODE
+
+config SPL_TEXT_BASE
+	hex
+	default 0xffe0000000
+
+config SPL_MAX_SIZE
+	hex
+	default 0x2f000
+
+config BOARD_SPECIFIC_OPTIONS
+	def_bool y
+	select RISCV_THEAD
+	imply CMD_NET
+	imply CMD_PING
+	imply CMD_MEMINFO
+	imply MII
+	imply NET_RANDOM_ETHADDR
+	imply PHY_LIB
+	imply PHY_MSCC
+	imply MMC
+	imply MMC_SPI
+	imply MMC_BROKEN_CD
+	imply CMD_MMC
+
+endif

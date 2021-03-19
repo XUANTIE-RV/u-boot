@@ -1,0 +1,90 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+# Set the JTAG address according to C-SKY debugserver settings
+tar jtag jtag://192.168.0.88:1025
+set $MII_EN=0
+set $USB_EN=0
+
+
+#################################
+# Define DelayTick function
+#################################
+define DelayTicks
+    set $total = $arg0
+    set $i = 0
+    set $temp = 0
+    while ($i < $total)
+        # Read SRAM which always can be read
+        set $temp = *(0xFE400000 + $i * 4)
+        set $i = $i + 1
+    end
+end
+
+#################################
+# Enable MII
+#################################
+if ($MII_EN == 1)
+    # MII, External 100Mbps Mode
+    set *0xfe83025c=0x0
+    set *0xfe83031c=0x1
+    # CLK_OUT pad disable
+    set *0xfff770c0=0x18a
+end
+
+#################################
+# Enable USB
+#################################
+if ($USB_EN == 1)
+    # Setup USB_CLK_CFG(0xFFF770F0)
+    set $USB_CLK_CFG=*0xFFF770F0
+    # Set ahb_clk_usb_en=1 to enable USB AHB clock
+    set $USB_CLK_CFG |= (1<<17)
+    # Set cfg_apb_clk_usb_phy_en=1 to enable APB clock
+    set $USB_CLK_CFG |= (1<<16)
+    # Set usb_phy_ref_clk_div_en=1 to enable PHY ref clock
+    set $USB_CLK_CFG |= (1<<7)
+    # Set usb_suspend_clk_div_en=1 to enable suspend clock
+    set $USB_CLK_CFG |= (1<<15)
+    set *0xFFF770F0=$USB_CLK_CFG
+    # delay 10us at least
+    shell sleep 0.1
+    # echo USB_CLK_CFG(0xFFF770F0, should be 0x39899) is:\n
+    # x/wx 0xFFF770F0
+
+    # Setup PHY internal ref clock (USB_CLK_CFG)
+    set *0xFE83009C=0x1
+    # delay 10us at least
+    shell sleep 0.1
+    # echo USB_CLK_CFG(0xFE83009C) is:\n
+    # x/wx 0xFE83009C
+
+    # Release PHY (USB_PHY_USW_RST_CFG)
+    set *0xFFF78048=0x1
+    # delay 10us at least
+    shell sleep 0.1
+    # echo USB_CLK_CFG(0xFFF78048) is:\n
+    # x/wx 0xFFF78048
+end
+
+# CPU cache settings
+set $cr18=0x7d
+
+# Setup MMU MSA0 reg
+set $cr31 = 0x0
+set $mcr30 = 0x0000000e
+set $msa0 = 0x0000000e
+
+# Load dtb
+set $fdt_addr = 0x577f0000
+restore uboot_c810.dtb binary $fdt_addr
+set $r1 = $fdt_addr
+
+load
+
+# flush cache
+set $cr17 = 0x33
+

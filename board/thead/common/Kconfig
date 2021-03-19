@@ -1,0 +1,17 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+config BOARD_CONSOLE_SUPPORT
+    bool
+
+config BOARD_MMC_SUPPORT
+    bool
+
+config BOARD_PRINTF_SUPPORT
+    bool
+
+config BOARD_SPIFLASH_SUPPORT
+    bool

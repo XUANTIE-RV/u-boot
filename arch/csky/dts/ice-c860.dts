@@ -1,0 +1,99 @@
+/dts-v1/;
+/ {
+    model = "csky ice_c860smp";
+    compatible = "csky,ice_c860smp";
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    memory {
+        device_type = "memory";
+        reg = <0x00000000 0x30000000>,
+            <0x60000000 0x20000000>;
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        timebase-frequency = <50000000>;
+        cpu@0 {
+            device_type = "cpu";
+            reg = <0>;
+            status = "okay";
+            compatible = "csky";
+            csky,isa = "Xuantie 860";
+        };
+    };
+
+    soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "simple-bus";
+        ranges;
+
+        intc: interrupt-controller {
+            compatible = "csky,mpintc";
+            interrupt-controller;
+            #interrupt-cells = <1>;
+        };
+
+        dummy_apb: apb-clock {
+            compatible = "fixed-clock";
+            clock-frequency = <62500000>;
+            clock-output-names = "dummy_apb";
+            #clock-cells = <0>;
+        };
+
+        serial@bff73000 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0xbff73000 0x400>;
+            interrupt-parent = <&intc>;
+            interrupts = <39>;
+            clocks = <&dummy_apb>;
+            clock-frequency = <62500000>;
+            clock-names = "baudclk";
+            reg-shift = <2>;
+            reg-io-width = <4>;
+        };
+
+        mmc: mmc0@bffb0000 {
+            compatible = "snps,dw-mshc";
+            reg = <0xbffb0000 0x400>;
+            bus-width = <8>;
+            clocks = <&dummy_apb>, <&dummy_apb>;
+            clock-names = "biu", "ciu";
+            max-frequency = <25000000>;
+        };
+
+        gmac: ethernet@bffc0000 {
+            compatible = "snps,arc-dwmac-3.70a";
+            reg = <0xbffc0000 0x2000>;
+            interrupt-parent = <&intc>;
+            interrupts = <56>;
+            interrupt-names = "macirq";
+            clocks = <&dummy_apb>;
+            clock-names = "stmmaceth";
+            snps,pbl = <32>;
+            snps,fixed-burst;
+
+            phy-mode = "rgmii-txid";
+            rx-clk-delay = <0x1f>; /* for RGMII */
+            tx-clk-delay = <0>;    /* for RGMII */
+            phy-handle = <&phy_88E1111>;
+            max-speed = <100>;
+            mdio0 {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                compatible = "snps,dwmac-mdio";
+
+                phy_88E1111: ethernet-phy@0 {
+                    reg = <0>;
+                };
+            };
+        };
+    };
+
+    chosen {
+        bootargs = "console=ttyS0,115200";
+        stdout-path = "/soc/serial@bff73000:115200";
+    };
+};

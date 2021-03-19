@@ -1,0 +1,168 @@
+# SPDX-License-Identifier: GPL-2.0+
+#
+# Copyright (C) 2020 Alibaba Group Holding Limited
+#
+
+src := $(obj)
+
+# Create output directory if not already present
+_dummy := $(shell [ -d $(obj) ] || mkdir -p $(obj))
+
+include $(srctree)/scripts/Kbuild.include
+
+-include include/config/auto.conf
+-include $(obj)/include/autoconf.mk
+
+KBUILD_CPPFLAGS += -DCONFIG_PPL_BUILD
+
+ifeq ($(obj)$(CONFIG_SUPPORT_PPL),ppl)
+$(error You cannot build PPL without enabling CONFIG_SUPPORT_PPL)
+endif
+
+include $(srctree)/config.mk
+include $(srctree)/arch/$(ARCH)/Makefile
+
+include $(srctree)/scripts/Makefile.lib
+
+# Enable garbage collection of un-used sections for SPL
+KBUILD_CFLAGS += -ffunction-sections -fdata-sections
+LDFLAGS_FINAL += --gc-sections
+
+# FIX ME
+cpp_flags := $(KBUILD_CPPFLAGS) $(PLATFORM_CPPFLAGS) $(UBOOTINCLUDE) \
+							$(NOSTDINC_FLAGS)
+c_flags := $(KBUILD_CFLAGS) $(cpp_flags)
+
+HAVE_VENDOR_COMMON_LIB = $(if $(wildcard $(srctree)/board/$(VENDOR)/common/Makefile),y,n)
+
+libs-y += $(if $(BOARDDIR),board/$(BOARDDIR)/)
+libs-$(HAVE_VENDOR_COMMON_LIB) += board/$(VENDOR)/common/
+
+head-y		:= $(addprefix $(obj)/,$(head-y))
+libs-y		:= $(addprefix $(obj)/,$(libs-y))
+u-boot-ppl-dirs	:= $(patsubst %/,%,$(filter %/, $(libs-y)))
+
+libs-y := $(patsubst %/, %/built-in.o, $(libs-y))
+
+u-boot-ppl-init := $(head-y)
+u-boot-ppl-main := $(libs-y)
+
+# Linker Script
+# First test whether there's a linker-script for the specific stage defined...
+ifneq ($(CONFIG_PPL_LDSCRIPT),)
+# need to strip off double quotes
+LDSCRIPT := $(addprefix $(srctree)/,$(CONFIG_PPL_LDSCRIPT:"%"=%))
+endif
+
+ifeq ($(wildcard $(LDSCRIPT)),)
+	LDSCRIPT := $(srctree)/board/$(BOARDDIR)/u-boot-ppl.lds
+endif
+ifeq ($(wildcard $(LDSCRIPT)),)
+	LDSCRIPT := $(srctree)/$(CPUDIR)/u-boot-ppl.lds
+endif
+ifeq ($(wildcard $(LDSCRIPT)),)
+	LDSCRIPT := $(srctree)/arch/$(ARCH)/cpu/u-boot-ppl.lds
+endif
+ifeq ($(wildcard $(LDSCRIPT)),)
+$(error could not find linker script)
+endif
+
+# Special flags for CPP when processing the linker script.
+# Pass the version down so we can handle backwards compatibility
+# on the fly.
+LDPPFLAGS += \
+	-include $(srctree)/include/u-boot/u-boot.lds.h \
+	-include $(objtree)/include/config.h \
+	-DCPUDIR=$(CPUDIR) \
+	$(shell $(LD) --version | \
+	  sed -ne 's/GNU ld version \([0-9][0-9]*\)\.\([0-9][0-9]*\).*/-DLD_MAJOR=\1 -DLD_MINOR=\2/p')
+
+# Turn various CONFIG symbols into IMAGE symbols for easy reuse of
+# the scripts between SPL and TPL.
+ifneq ($(CONFIG_PPL_MAX_SIZE),)
+LDPPFLAGS += -DIMAGE_MAX_SIZE=$(CONFIG_PPL_MAX_SIZE)
+endif
+ifneq ($(CONFIG_PPL_TEXT_BASE),)
+LDPPFLAGS += -DIMAGE_TEXT_BASE=$(CONFIG_PPL_TEXT_BASE)
+endif
+
+MKIMAGEOUTPUT ?= /dev/null
+
+quiet_cmd_mkimage = MKIMAGE $@
+cmd_mkimage = $(objtree)/tools/mkimage $(MKIMAGEFLAGS_$(@F)) -d $< $@ \
+	>$(MKIMAGEOUTPUT) $(if $(KBUILD_VERBOSE:0=), && cat $(MKIMAGEOUTPUT))
+
+ALL-y	+= $(obj)/u-boot-ppl.bin
+
+all:	$(ALL-y)
+
+quiet_cmd_cat = CAT     $@
+cmd_cat = cat $(filter-out $(PHONY), $^) > $@
+
+quiet_cmd_copy = COPY    $@
+      cmd_copy = cp $< $@
+
+$(obj)/u-boot-ppl.bin: $(obj)/u-boot-ppl-nodtb.bin FORCE
+	$(call if_changed,copy)
+
+quiet_cmd_objcopy = OBJCOPY $@
+cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
+
+OBJCOPYFLAGS_u-boot-ppl-nodtb.bin = $(PPL_OBJCFLAGS) -O binary
+
+$(obj)/u-boot-ppl-nodtb.bin: $(obj)/u-boot-ppl FORCE
+	$(call if_changed,objcopy)
+
+LDFLAGS_u-boot-ppl += -T u-boot-ppl.lds $(LDFLAGS_FINAL)
+
+# Avoid 'Not enough room for program headers' error on binutils 2.28 onwards.
+LDFLAGS_u-boot-ppl += $(call ld-option, --no-dynamic-linker)
+
+# Pick the best-match (i.e. SPL_TEXT_BASE for SPL, TPL_TEXT_BASE for TPL)
+ifneq ($(CONFIG_PPL_TEXT_BASE),)
+LDFLAGS_u-boot-ppl += -Ttext $(CONFIG_PPL_TEXT_BASE)
+endif
+
+# Rule to link u-boot-ppl
+# May be overridden by arch/$(ARCH)/config.mk
+quiet_cmd_u-boot-ppl ?= LD      $@
+      cmd_u-boot-ppl ?= (cd $(obj) && $(LD) $(LDFLAGS) $(LDFLAGS_$(@F)) \
+		       $(patsubst $(obj)/%,%,$(u-boot-ppl-init)) --start-group \
+		       $(patsubst $(obj)/%,%,$(u-boot-ppl-main))  \
+		       --end-group \
+		       $(PLATFORM_LIBS) -Map u-boot-ppl.map -o u-boot-ppl)
+
+$(obj)/u-boot-ppl: $(u-boot-ppl-init) \
+		$(u-boot-ppl-main) $(obj)/u-boot-ppl.lds FORCE
+	$(call if_changed,u-boot-ppl)
+
+$(sort $(u-boot-ppl-init) $(u-boot-ppl-main)): $(u-boot-ppl-dirs) ;
+
+PHONY += $(u-boot-ppl-dirs)
+$(u-boot-ppl-dirs):
+	$(Q)$(MAKE) $(build)=$@
+
+quiet_cmd_cpp_lds = LDS     $@
+cmd_cpp_lds = $(CPP) -Wp,-MD,$(depfile) $(cpp_flags) $(LDPPFLAGS) -ansi \
+		-D__ASSEMBLY__ -x assembler-with-cpp -std=c99 -P -o $@ $<
+
+$(obj)/u-boot-ppl.lds: $(LDSCRIPT) FORCE
+	$(call if_changed_dep,cpp_lds)
+
+# read all saved command lines
+
+targets := $(wildcard $(sort $(targets)))
+cmd_files := $(wildcard $(obj)/.*.cmd $(foreach f,$(targets),$(dir $(f)).$(notdir $(f)).cmd))
+
+ifneq ($(cmd_files),)
+  $(cmd_files): ;	# Do not try to update included dependency files
+  include $(cmd_files)
+endif
+
+PHONY += FORCE
+FORCE:
+
+# Declare the contents of the .PHONY variable as phony.  We keep that
+# information in a variable so we can use it in if_changed and friends.
+.PHONY: $(PHONY)
+
