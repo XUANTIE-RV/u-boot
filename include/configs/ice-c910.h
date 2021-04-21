@@ -41,7 +41,8 @@
 	"kernel_addr=0x00200000\0" \
 	"avail_addr=0x10000000\0" \
 	"boot_vector=0\0" \
-	"set_bootargs=setenv bootargs console=ttyS0,115200 root=PARTUUID=$uuid_rootfs rootfstype=ext4 rdinit=/sbin/init rootwait rw earlyprintk clk_ignore_unused loglevel=7 c910_mmu_v1 eth=$ethaddr\0" \
+	"console_port=console=ttyS1,115200\0" \
+	"set_bootargs=setenv bootargs $console_port root=PARTUUID=$uuid_rootfs rootfstype=ext4 rdinit=/sbin/init rootwait rw earlyprintk clk_ignore_unused loglevel=7 c910_mmu_v1 eth=$ethaddr\0" \
 	"bootcmd_load=ext4load mmc 0:2 $opensbi_addr fw_jump.bin; ext4load mmc 0:2 $dtb_addr hw.dtb; ext4load mmc 0:2 $kernel_addr uImage\0" \
 	"bootcmd=run bootcmd_load; run set_bootargs; bootm $kernel_addr - $dtb_addr\0" \
 	"\0"

@@ -33,7 +33,8 @@ static inline void boot_core_vector(void)
 	csr_write(CSR_MCCR2, 0xe0410009);
 	csr_write(CSR_MHCR, 0x11ff);
 	csr_write(CSR_MXSTATUS, 0x638000);
-	csr_write(CSR_MHINT, 0x6e30c);
+	// csr_write(CSR_MHINT, 0x6e30c);
+	csr_write(CSR_MHINT, 0x16e30c);
 
 	image_entry(0xdeadbeef, dtb_addr);
 }

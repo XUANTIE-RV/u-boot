@@ -235,6 +235,21 @@ static void spi_hw_init(void)
 	writel(readl((void *)0x3fe830330) | (1 << 22), (void *)0x3fe830330);
 }
 
+static void wifibt_hw_init(void)
+{
+#if defined(CONFIG_SDIO_WIFI_BT_HW)
+	/*wifi power on */
+	writel(readl((void *)0x3fff72004) | (1 << 5), (void *)0x3fff72004);
+	writel(readl((void *)0x3fff72000) | (1 << 5), (void *)0x3fff72000);
+	/*bt wake up */
+	writel(readl((void *)0x3fff72004) | (1 << 7), (void *)0x3fff72004);
+	writel(readl((void *)0x3fff72000) | (1 << 7), (void *)0x3fff72000);
+	/*bt power on */
+	writel(readl((void *)0x3fff72004) | (1 << 8), (void *)0x3fff72004);
+	writel(readl((void *)0x3fff72000) | (1 << 8), (void *)0x3fff72000);
+#endif
+}
+
 void show_sys_clk(void)
 {
 	unsigned int read = 0;
@@ -270,6 +285,7 @@ int board_init(void)
 	sd_hw_init();
 	spi_hw_init();
 	dpu_start();
+	wifibt_hw_init();
 	show_sys_clk();
 
 	return 0;

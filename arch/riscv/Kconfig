@@ -251,4 +251,10 @@ config STACK_SIZE_SHIFT
 config SPL_LDSCRIPT
 	default "arch/riscv/cpu/u-boot-spl.lds"
 
+config SDIO_WIFI_BT_HW
+    bool "Use SDIO WIFI_BT HW"
+	depends on TARGET_ICE_C910
+    help
+      Enable SDIO WIFI/BT HW init.
+
 endmenu
