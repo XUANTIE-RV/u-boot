@@ -1,0 +1,94 @@
+/dts-v1/;
+/ {
+	model = "T-HEAD c910 ice";
+	compatible = "thead,c910_ice";
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x0 0x1 0x0>;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <3000000>;
+		u-boot,dm-pre-reloc;
+		cpu@0 {
+			device_type = "cpu";
+			reg = <0>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcvsu";
+			mmu-type = "riscv,sv39";
+			u-boot,dm-pre-reloc;
+		};
+	};
+
+	soc {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		compatible = "simple-bus";
+		ranges;
+		u-boot,dm-pre-reloc;
+
+		dummy_apb: apb-clock {
+			compatible = "fixed-clock";
+			clock-frequency = <62500000>;
+			clock-output-names = "dummy_apb";
+			#clock-cells = <0>;
+			u-boot,dm-pre-reloc;
+		};
+
+		serial@3fff73000 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0x3 0xfff73000 0x0 0x400>;
+			clock-frequency = <62500000>;
+			clock-names = "baudclk";
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			u-boot,dm-pre-reloc;
+		};
+
+		mmc: mmc0@3fffb0000 {
+			compatible = "snps,dw-mshc";
+			reg = <0x3 0xfffb0000 0x0 0x400>;
+			bus-width = <8>;
+			clocks = <&dummy_apb>, <&dummy_apb>;
+			clock-names = "biu", "ciu";
+			max-frequency = <20000000>;
+			fifo-mode;
+			u-boot,dm-pre-reloc;
+		};
+
+		gmac: ethernet@3fffc0000 {
+			compatible = "snps,dwmac";
+			reg = <0x3 0xfffc0000 0x0 0x2000>;
+			clocks = <&dummy_apb>;
+			clock-names = "stmmaceth";
+			snps,pbl = <32>;
+			snps,fixed-burst;
+
+			max-speed = <100>;
+			phy-mode = "mii";
+			phy-handle = <&phy_88E1111>;
+			mdio0 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				compatible = "snps,dwmac-mdio";
+
+				phy_88E1111: ethernet-phy@0 {
+					reg = <0x0 0x0>;
+				};
+			};
+		};
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200 crashkernel=256M-:128M";
+		linux,initrd-start = <0x0 0x2000000>;
+		linux,initrd-end = <0x0 0x0>;
+		stdout-path = "/soc/serial@3fff73000:115200";
+	};
+};

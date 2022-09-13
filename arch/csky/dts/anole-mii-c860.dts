@@ -1,0 +1,103 @@
+/dts-v1/;
+/ {
+	model = "csky anole_c860smp";
+	compatible = "csky,anole_c860smp";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	memory {
+		device_type = "memory";
+		reg = <0x00000000 0x40000000>;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <50000000>;
+		cpu@0 {
+			device_type = "cpu";
+			reg = <0>;
+			status = "okay";
+			compatible = "csky";
+			csky,isa = "Unknown";
+		};
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+
+		intc: interrupt-controller {
+			compatible = "csky,mpintc";
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+
+		dummy_clk_ahb: dummy-clk-ahb {
+			compatible = "fixed-clock";
+			clock-frequency = <250000000>;
+			clock-output-names = "dummy_clk_ahb";
+			#clock-cells = <0>;
+		};
+
+		/* Actually is 100M, before turning, set as 150M to get div=2*2 */
+		dummy_clk_sdio: dummy-clk-sdio {
+			compatible = "fixed-clock";
+			clock-frequency = <100000000>;
+			clock-output-names = "dummy_clk_sdio";
+			#clock-cells = <0>;
+		};
+
+		serial@bff73000 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0xbff73000 0x400>;
+			interrupt-parent = <&intc>;
+			interrupts = <39>;
+			clock-frequency = <62500000>;
+			clock-names = "baudclk";
+			reg-shift = <2>;
+			reg-io-width = <4>;
+		};
+
+		mmc: mmc0@bffb0000 {
+			compatible = "snps,dw-mshc";
+			reg = <0xbffb0000 0x400>;
+			bus-width = <8>;
+			clocks = <&dummy_clk_sdio>, <&dummy_clk_sdio>;
+			clock-names = "biu", "ciu";
+			max-frequency = <25000000>;
+		};
+
+		gmac: ethernet@bffc0000 {
+			compatible = "snps,arc-dwmac-3.70a";
+			reg = <0xbffc0000 0x2000>;
+			interrupt-parent = <&intc>;
+			interrupts = <56>;
+			interrupt-names = "macirq";
+			clocks = <&dummy_clk_ahb>;
+			clock-names = "stmmaceth";
+			snps,pbl = <32>;
+			snps,fixed-burst;
+
+			phy-mode = "mii";
+			phy-handle = <&eth_phy_0>;
+			max-speed = <100>;
+			mdio0 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				compatible = "snps,dwmac-mdio";
+
+				eth_phy_0: ethernet-phy@0 {
+					reg = <0>;
+				};
+			};
+		};
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200";
+		stdout-path = "/soc/serial@bff73000:115200";
+	};
+};

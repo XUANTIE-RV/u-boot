@@ -1,0 +1,222 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+if TARGET_LIGHT_C910
+
+config PMIC_VOL_INIT
+    bool "tuning light-ddr regulators"
+    default n
+
+config DDR_REGU_0V6
+    int "uint in uv"
+    default 640000
+
+config DDR_REGU_0V8
+    int "uint in uv"
+    default 820000
+
+config DDR_REGU_1V1
+    int "uint in uv"
+    default 1200000
+
+config SYS_CPU
+    default "c9xx"
+
+config SYS_VENDOR
+    default "thead"
+
+config SYS_BOARD
+    default "light-c910"
+
+config SYS_CONFIG_NAME
+    default "light-c910"
+
+config LIGHT_SEC_UPGRADE
+    bool "light secure upgrade"
+    default n
+
+config LIGHT_SEC_BOOT_WITH_VERIFY_VAL_A
+    bool "light board-a security boot with verification"
+    default n
+
+config LIGHT_SEC_BOOT_WITH_VERIFY_VAL_B
+	bool "light board-b security boot with verification"
+
+config LIGHT_SEC_BOOT_WITH_VERIFY_ANT_EVT
+	bool "light ant evt security boot with verification"
+
+config TARGET_LIGHT_FPGA_FM_C910
+    bool "light fullmask FPGA board"
+    default n
+
+config TARGET_LIGHT_FM_C910_VAL_SV
+    bool "light fullmask VAL board for system validation"
+    default n
+
+config TARGET_LIGHT_FM_C910_VAL_A
+    bool "light fullmask VAL board-a for system validation"
+    default n
+
+config TARGET_LIGHT_FM_C910_VAL_B
+    bool "light fullmask VAL board-b for system validation"
+    default n
+
+config TARGET_LIGHT_FM_C910_VAL_ANT_EVT
+    bool "light fullmask for ant-evt board "
+    default n
+
+config TARGET_LIGHT_FM_C910_VAL_ANT_DISCRETE
+    bool "light fullmask for ant-evt board "
+    default n
+
+config SYS_TEXT_BASE
+    default 0xc0000000 if RISCV_MMODE
+    default 0x00200000 if RISCV_SMODE
+
+config SPL_TEXT_BASE
+    hex
+    default 0xffe0000800 if LIGHT_SEC_BOOT_WITH_VERIFY_VAL_A || LIGHT_SEC_BOOT_WITH_VERIFY_VAL_B || LIGHT_SEC_BOOT_WITH_VERIFY_ANT_EVT
+    default 0xffe0000000 if !(LIGHT_SEC_BOOT_WITH_VERIFY_VAL_A || LIGHT_SEC_BOOT_WITH_VERIFY_VAL_B || LIGHT_SEC_BOOT_WITH_VERIFY_ANT_EVT)
+
+config SPL_MAX_SIZE
+    hex
+    default 0x2f000
+
+config BOARD_SPECIFIC_OPTIONS
+    def_bool y
+    select RISCV_THEAD
+    imply CMD_NET
+    imply CMD_PING
+    imply CMD_MEMINFO
+    imply MII
+    imply NET_RANDOM_ETHADDR
+    imply PHY_LIB
+    imply PHY_MSCC
+    imply MMC
+    imply MMC_SPI
+    imply MMC_BROKEN_CD
+    imply CMD_MMC
+
+if !TARGET_LIGHT_FPGA_FM_C910
+config DDR_LP4X_4266_DUALRANK
+        bool "LPDDR4X 4266 dualrank configuration"
+        help
+          Enabling this will support lpddr4x 4266 dualrank configuration.
+config DDR_LP4X_4266_SINGLERANK
+        bool "LPDDR4X 4266 singlerank configuration"
+        help
+          Enabling this will support lpddr4x 4266 singlerank configuration.
+config DDR_LP4X_3733_DUALRANK
+        bool "LPDDR4X 3733 dualrank configuration"
+        help
+          Enabling this will support lpddr4x 3733 dualrank configuration.
+config DDR_LP4X_3733_SINGLERANK
+        bool "LPDDR4X 3733 singlerank configuration"
+        help
+          Enabling this will support lpddr4x 3733 singlerank configuration.
+config DDR_LP4X_3200_DUALRANK
+        bool "LPDDR4X 3200 dualrank configuration"
+        help
+          Enabling this will support lpddr4x 3200 dualrank configuration.
+config DDR_LP4X_3200_SINGLERANK
+        bool "LPDDR4X 3200 singlerank configuration"
+        help
+          Enabling this will support lpddr4x 3200 singlerank configuration.
+config DDR_LP4X_2133_DUALRANK
+        bool "LPDDR4X 2133 dualrank configuration"
+        help
+          Enabling this will support lpddr4x 2133 dualrank configuration.
+config DDR_LP4X_2133_SINGLERANK
+        bool "LPDDR4X 2133 singlerank configuration"
+        help
+          Enabling this will support lpddr4x 2133 singlerank configuration.
+config DDR_LP4_4266_DUALRANK
+        bool "LPDDR4 4266 dualrank configuration"
+        help
+          Enabling this will support lpddr4 4266 dualrank configuration.
+config DDR_LP4_4266_SINGLERANK
+        bool "LPDDR4 4266 singlerank configuration"
+        help
+          Enabling this will support lpddr4 4266 singlerank configuration.
+config DDR_LP4_3733_DUALRANK
+        bool "LPDDR4 3733 dualrank configuration"
+        help
+          Enabling this will support lpddr4 3733 dualrank configuration.
+config DDR_LP4_3733_SINGLERANK
+        bool "LPDDR4 3733 singlerank configuration"
+        help
+          Enabling this will support lpddr4 3733 singlerank configuration.
+config DDR_LP4_3200_DUALRANK
+        bool "LPDDR4 3200 dualrank configuration"
+        help
+          Enabling this will support lpddr4 3200 dualrank configuration.
+config DDR_LP4_3200_SINGLERANK
+        bool "LPDDR4 3200 singlerank configuration"
+        help
+          Enabling this will support lpddr4 3200 singlerank configuration.
+config DDR_LP4_2133_DUALRANK
+        bool "LPDDR4 2133 dualrank configuration"
+        help
+          Enabling this will support lpddr4 2133 dualrank configuration.
+config DDR_LP4_2133_SINGLERANK
+        bool "LPDDR4 2133 singlerank configuration"
+        help
+          Enabling this will support lpddr4 2133 singlerank configuration.
+
+config DDR_H32_MODE
+        bool "LPDDR4/4X 32bit mode configuration"
+        help
+          Enabling this will support ddr 32bit mode configuration.
+
+config LPDDR4X
+        def_bool y if DDR_LP4X_4266_DUALRANK || DDR_LP4X_4266_SINGLERANK || DDR_LP4X_3733_DUALRANK || DDR_LP4X_3733_SINGLERANK \
+                        || DDR_LP4X_3200_DUALRANK || DDR_LP4X_3200_SINGLERANK || DDR_LP4X_2133_DUALRANK || DDR_LP4X_2133_SINGLERANK
+config LPDDR4
+        def_bool y if !LPDDR4X && (DDR_LP4_4266_DUALRANK || DDR_LP4_4266_SINGLERANK || DDR_LP4_3733_DUALRANK || DDR_LP4_3733_SINGLERANK \
+                        || DDR_LP4_3200_DUALRANK || DDR_LP4_3200_SINGLERANK || DDR_LP4_2133_DUALRANK || DDR_LP4_2133_SINGLERANK)
+
+config LPDDR
+        def_bool y if LPDDR4X || LPDDR4
+
+config DDR_4266
+        def_bool y if DDR_LP4X_4266_DUALRANK || DDR_LP4X_4266_SINGLERANK || DDR_LP4_4266_DUALRANK || DDR_LP4_4266_SINGLERANK
+config DDR_3733
+        def_bool y if DDR_LP4X_3733_DUALRANK || DDR_LP4X_3733_SINGLERANK || DDR_LP4_3733_DUALRANK || DDR_LP4_3733_SINGLERANK
+config DDR_3200
+        def_bool y if DDR_LP4X_3200_DUALRANK || DDR_LP4X_3200_SINGLERANK || DDR_LP4_3200_DUALRANK || DDR_LP4_3200_SINGLERANK
+config DDR_2133
+        def_bool y if DDR_LP4X_2133_DUALRANK || DDR_LP4X_2133_SINGLERANK || DDR_LP4_2133_DUALRANK || DDR_LP4_2133_SINGLERANK
+
+config FW_MSG_L3
+        def_bool n
+config FW_MSG_L2
+        def_bool n if !FW_MSG_L3
+config FW_MSG_L1
+        def_bool n if !FW_MSG_L3 && !FW_MSG_L2
+config FW_MSG_TRAIN_1D
+        def_bool n if FW_MSG_L2
+config DDR_MSG
+	def_bool y if FW_MSG_L1 || FW_MSG_L2 || FW_MSG_L3
+config DDR_HARD_2D
+	def_bool n
+
+config DDR_DUAL_RANK
+	def_bool y if DDR_LP4X_4266_DUALRANK || DDR_LP4X_3733_DUALRANK || DDR_LP4X_3200_DUALRANK || DDR_LP4X_2133_DUALRANK \
+			|| DDR_LP4_4266_DUALRANK || DDR_LP4_3733_DUALRANK || DDR_LP4_3200_DUALRANK || DDR_LP4_2133_DUALRANK
+
+config DDR_CHBIT_256B
+        def_bool y if !DDR_H32_MODE
+
+config DDR_DBI_OFF
+        def_bool n
+
+config LPDDR_EYE
+        def_bool n
+config LPDDR_TXEYE
+        def_bool n if LPDDR_EYE
+endif
+
+endif

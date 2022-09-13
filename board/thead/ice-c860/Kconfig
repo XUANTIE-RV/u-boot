@@ -1,0 +1,52 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+if TARGET_ICE_C860
+
+config SYS_VENDOR
+    default "thead"
+
+config SYS_BOARD
+    default "ice-c860"
+
+config SYS_CONFIG_NAME
+    default "ice-c860"
+
+config SYS_TEXT_BASE
+    default 0x17800000
+
+config SPL_TEXT_BASE
+    default 0xfe400000
+
+config BOARD_SPECIFIC_OPTIONS
+    def_bool y
+    select C860_CSKY
+    imply CMD_DHCP
+    imply CMD_EXT2
+    imply CMD_EXT4
+    imply CMD_FAT
+    imply CMD_FS_GENERIC
+    imply CMD_NET
+    imply CMD_PING
+    imply CMD_TFTPPUT
+    imply CMD_TFTPSRV
+    imply CMD_BOOT_SLAVE
+    imply NET_RANDOM_ETHADDR
+    imply NETDEVICES
+    imply ETH_DESIGNWARE
+    imply MMC
+    imply CMD_MMC
+    imply DOS_PARTITION
+    imply EFI_PARTITION
+    imply IP_DYN
+    imply ISO_PARTITION
+    imply MACB
+    imply MII
+    imply PHY_LIB
+    imply PHY_MSCC
+    imply SPI
+
+endif

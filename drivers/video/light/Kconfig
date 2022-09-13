@@ -1,0 +1,31 @@
+#
+# Light Video configuration
+#
+
+config VIDEO_VS_DPU
+	bool "Verisilicon DPU(DC8200) video support"
+	depends on DM_VIDEO && TARGET_LIGHT_C910
+	help
+	  Support for Verisilicon DPU controller on Light platform
+
+config VIDEO_DW_DSI_LIGHT
+	bool "Synopsys Designware MIPI DSI support on Light"
+	depends on DM_VIDEO && TARGET_LIGHT_C910
+	select VIDEO_DW_DSI_HOST
+	help
+	  support for Synopsys Designware MIPI DSI on Thead
+	  Light platform.
+
+config VIDEO_DW_DSI_HOST
+	bool "Synopsys Designware MIPI DSI HOST support"
+	depends on DM_VIDEO && TARGET_LIGHT_C910
+	help
+	  support for Synopsys Designware MIPI DSI HOST on
+	  Thead Light platform.
+
+config VIDEO_DW_DPHY
+	bool "Synopsys Designware MIPI DSI DPHY support"
+	depends on DM_VIDEO && TARGET_LIGHT_C910
+	help
+	  support for Synopsys Designware 2.5Gbps MIPI DPHY
+	  on Thead Light platform.

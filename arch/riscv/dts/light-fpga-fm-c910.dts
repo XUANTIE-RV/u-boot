@@ -1,0 +1,184 @@
+/dts-v1/;
+/ {
+	model = "T-HEAD c910 light";
+	compatible = "thead,c910_light";
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x0 0x1 0x0>;
+	};
+
+	aliases {
+		spi0 = &spi0;
+		spi1 = &qspi0;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <3000000>;
+		u-boot,dm-pre-reloc;
+		cpu@0 {
+			device_type = "cpu";
+			reg = <0>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdcvsu";
+			mmu-type = "riscv,sv39";
+			u-boot,dm-pre-reloc;
+		};
+	};
+
+	soc {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		compatible = "simple-bus";
+		ranges;
+		u-boot,dm-pre-reloc;
+
+		dummy_apb: apb-clock {
+			compatible = "fixed-clock";
+			clock-frequency = <50000000>;
+			clock-output-names = "dummy_apb";
+			#clock-cells = <0>;
+			u-boot,dm-pre-reloc;
+		};
+
+		dummy_ahb: ahb-clock {
+			compatible = "fixed-clock";
+			clock-frequency = <50000000>;
+			clock-output-names = "core";
+			#clock-cells = <0>;
+			u-boot,dm-pre-reloc;
+		};
+
+		i2c0: i2c@ffe7f20000 {
+			compatible = "snps,designware-i2c";
+			reg = <0xff 0xe7f20000 0x0 0x4000>;
+			clocks = <&dummy_apb>;
+			clock-frequency = <100000>;
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		serial@ffe7014000 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0xff 0xe7014000 0x0 0x400>;
+			clocks = <&dummy_apb>;
+			clock-frequency = <50000000>;
+			clock-names = "baudclk";
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			u-boot,dm-pre-reloc;
+		};
+
+		gmac: ethernet@ffe7070000 {
+			compatible = "snps,dwmac";
+			reg = <0xff 0xe7070000 0x0 0x2000>;
+			clocks = <&dummy_apb>;
+			clock-names = "stmmaceth";
+			snps,pbl = <32>;
+			snps,fixed-burst;
+
+			max-speed = <100>;
+			phy-mode = "mii";
+			phy-handle = <&phy_88E1111>;
+			mdio0 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				compatible = "snps,dwmac-mdio";
+
+				phy_88E1111: ethernet-phy@0 {
+					reg = <0x0 0x0>;
+				};
+			};
+		};
+
+		emmc: sdhci@ffe7080000 {
+			compatible = "snps,dwcmshc-sdhci";
+			reg = <0xff 0xe7080000 0x0 0x10000>;
+			index = <0x0>;
+			clocks = <&dummy_ahb>;
+			clock-frequency = <50000000>;
+			clock-names = "core";
+			max-frequency = <20000000>;
+			sdhci-caps-mask = <0x0 0x1000000>;
+			non-removable;
+			no-sdio;
+			no-sd;
+			bus-width = <8>;
+			fifo-mode;
+			u-boot,dm-pre-reloc;
+		};
+
+		sdhci0: sd@ffe7090000 {
+			compatible = "snps,dwcmshc-sdhci";
+			reg = <0xff 0xe7090000 0x0 0x10000>;
+			index = <0x1>;
+			clocks = <&dummy_ahb>;
+			clock-frequency = <50000000>;
+			max-frequency = <20000000>;
+			//sd-uhs-sdr104 = "true";
+			clock-names = "core";
+			bus-width = <4>;
+			voltage= "3.3v";
+		};
+
+		qspi0: spi@ffea000000 {
+			compatible = "snps,dw-apb-ssi-quad";
+			reg = <0xff 0xea000000 0x0 0x1000>;
+			clocks = <&dummy_apb>;
+			num-cs = <1>;
+			cs-gpio = <&gpio2_porta 3 0>; // GPIO_ACTIVE_HIGH: 0
+			spi-max-frequency = <3125000>;
+			#address-cells = <1>;
+			#size-cells =<0>;
+			spi-flash@0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "spi-nand";
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				reg = <0>;
+			};
+		};
+
+		spi0: spi@ffe700c000 {
+			compatible = "snps,dw-apb-ssi";
+			reg = <0xff 0xe700c000 0x0 0x1000>;
+			clocks = <&dummy_apb>;
+			cs-gpio = <&gpio2_porta 15 0>;
+			spi-max-frequency = <12500000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			flash@0 {
+				compatible = "jedec,spi-nor";
+				reg = <0>;
+				spi-max-frequency = <12500000>;
+			};
+		};
+
+		gpio2: gpio@ffe7f34000 {
+			compatible = "snps,dw-apb-gpio";
+			reg = <0xff 0xe7f34000 0x0 0x1000>;
+			clocks = <&dummy_apb>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			gpio2_porta: gpio-controller@0 {
+				compatible = "snps,dw-apb-gpio-port";
+				gpio-controller;
+				#gpio-cells = <2>;
+				snps,nr-gpios = <32>;
+				reg = <0>;
+			};
+		};
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200";
+		stdout-path = "/soc/serial@ffe7014000:115200";
+	};
+};

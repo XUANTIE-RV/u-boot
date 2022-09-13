@@ -1,0 +1,15 @@
+#
+# Copyright (C) 2017-2020 Alibaba Group Holding Limited
+#
+# SPDX-License-Identifier: GPL-2.0+
+#
+
+# Disable CPU cache
+set $cr18=0x00
+
+# Load dtb
+set $fdt_addr = 0x977f0000
+restore uboot_c810.dtb binary $fdt_addr
+set $r1 = $fdt_addr
+
+load
